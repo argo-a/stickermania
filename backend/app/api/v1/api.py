@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from .endpoints import (
     health,
     collectors,
+    competitions,
     albums,
     stickers,
     cards,
@@ -16,6 +17,13 @@ api_router = APIRouter()
 
 # Health check
 api_router.include_router(health.router, tags=["health"])
+
+# Core Management
+api_router.include_router(
+    competitions.router,
+    prefix="/competitions",
+    tags=["competitions"]
+)
 
 # Collection Management
 api_router.include_router(
