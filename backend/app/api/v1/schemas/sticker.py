@@ -1,14 +1,22 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, conint, constr
 from datetime import datetime
+from enum import Enum
+
+class ConditionEnum(str, Enum):
+    MINT = "mint"
+    NEAR_MINT = "near_mint"
+    EXCELLENT = "excellent"
+    GOOD = "good"
+    FAIR = "fair"
+    POOR = "poor"
 
 class StickerBase(BaseModel):
     album_id: int
     sticker_name: str
     sticker_number: str
-    album_publisher: int
     sticker_edition: str
-    sticker_rarity_level: int
+    sticker_rarity_level: conint(ge=1, le=5)  # Validates between 1 and 5
     language: Optional[str]
     sticker_print_variation: Optional[str]
 
@@ -18,7 +26,7 @@ class StickerCreate(StickerBase):
 class StickerUpdate(BaseModel):
     sticker_name: Optional[str] = None
     sticker_edition: Optional[str] = None
-    sticker_rarity_level: Optional[int] = None
+    sticker_rarity_level: Optional[conint(ge=1, le=5)] = None
     sticker_print_variation: Optional[str] = None
 
 class StickerResponse(StickerBase):
@@ -32,16 +40,16 @@ class StickerResponse(StickerBase):
 class CollectorStickerBase(BaseModel):
     collector_album_id: int
     sticker_id: int
-    collector_stickers_quantity: int = 1
-    collector_stickers_condition: str
+    collector_stickers_quantity: conint(gt=0)  # Must be greater than 0
+    collector_stickers_condition: ConditionEnum
     collector_stickers_is_duplicate: bool = False
 
 class CollectorStickerCreate(CollectorStickerBase):
     pass
 
 class CollectorStickerUpdate(BaseModel):
-    collector_stickers_quantity: Optional[int] = None
-    collector_stickers_condition: Optional[str] = None
+    collector_stickers_quantity: Optional[conint(gt=0)] = None
+    collector_stickers_condition: Optional[ConditionEnum] = None
     collector_stickers_is_duplicate: Optional[bool] = None
 
 class CollectorStickerResponse(CollectorStickerBase):

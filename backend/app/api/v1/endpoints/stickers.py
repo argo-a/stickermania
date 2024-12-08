@@ -15,6 +15,17 @@ from ..schemas.sticker import (
 
 router = APIRouter()
 
+@router.get("/{sticker_id}", response_model=StickerResponse)
+async def get_sticker(
+    sticker_id: int,
+    db: Session = Depends(get_db)
+):
+    """Get a specific sticker by ID"""
+    sticker = db.query(Sticker).filter(Sticker.id == sticker_id).first()
+    if not sticker:
+        raise HTTPException(status_code=404, detail="Sticker not found")
+    return sticker
+
 @router.get("/album/{album_id}", response_model=List[StickerResponse])
 async def list_album_stickers(
     album_id: int,

@@ -8,7 +8,6 @@ class Sticker(BaseModel):
     album_id = Column(Integer, ForeignKey("albums.id"), nullable=False)
     sticker_name = Column(String, nullable=False)
     sticker_number = Column(String, nullable=False)
-    album_publisher = Column(Integer, ForeignKey("albums.id"), nullable=False)
     sticker_edition = Column(String, nullable=False)
     sticker_rarity_level = Column(Integer, nullable=False)
     language = Column(String, nullable=True)
@@ -20,8 +19,7 @@ class Sticker(BaseModel):
     )
 
     # Relationships
-    album = relationship("Album", foreign_keys=[album_id], back_populates="stickers")
-    publisher = relationship("Album", foreign_keys=[album_publisher])
+    album = relationship("Album", back_populates="stickers")
     collector_stickers = relationship("CollectorSticker", back_populates="sticker")
 
 class CollectorSticker(BaseModel):

@@ -10,6 +10,10 @@ from app.models import (
     Competition, Collector, Album, AlbumSection,
     Sticker, Card, Pack, Box, Memorabilia
 )
+from app.models.types import (
+    BoxTypes, ConditionTypes, ContainerTypes, 
+    PackTypes, LanguageTypes, CompetitionTypes
+)
 
 # Create test database
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
@@ -39,10 +43,14 @@ def client(db_session):
         try:
             yield db_session
         finally:
-            db_session.close()
+            pass  # Don't close the session here
     
     app.dependency_overrides[get_db] = override_get_db
-    yield TestClient(app)
+    # Create test client
+    client = TestClient(app)
+    # Configure client to follow redirects
+    client.headers.update({"accept": "application/json"})
+    yield client
     del app.dependency_overrides[get_db]
 
 @pytest.fixture
@@ -51,13 +59,12 @@ def test_competition(db_session):
     competition = Competition(
         competition_name="World Cup 2022",
         competition_year=2022,
-        competition_type="world_cup",
+        competition_type=CompetitionTypes.WORLD_CUP,
         competition_host_country="Qatar",
         competition_winner="Argentina"
     )
     db_session.add(competition)
     db_session.commit()
-    db_session.refresh(competition)
     return competition
 
 @pytest.fixture
@@ -71,7 +78,6 @@ def test_collector(db_session):
     )
     db_session.add(collector)
     db_session.commit()
-    db_session.refresh(collector)
     return collector
 
 @pytest.fixture
@@ -82,14 +88,13 @@ def test_album(db_session, test_competition):
         album_title="World Cup 2022 Album",
         album_edition="regular",
         album_cover_type="softcover",
-        album_language="english",
+        album_language=LanguageTypes.ENGLISH,
         album_publisher="Panini",
         album_total_stickers=670,
         album_release_year=2022
     )
     db_session.add(album)
     db_session.commit()
-    db_session.refresh(album)
     return album
 
 @pytest.fixture
@@ -99,14 +104,12 @@ def test_sticker(db_session, test_album):
         album_id=test_album.id,
         sticker_name="Lionel Messi",
         sticker_number="1",
-        album_publisher=test_album.id,
         sticker_edition="regular",
         sticker_rarity_level=1,
-        language="english"
+        language=LanguageTypes.ENGLISH
     )
     db_session.add(sticker)
     db_session.commit()
-    db_session.refresh(sticker)
     return sticker
 
 @pytest.fixture
@@ -119,11 +122,10 @@ def test_card(db_session, test_competition):
         card_team="Argentina",
         card_edition="regular",
         card_rarity_level=1,
-        language="english"
+        language=LanguageTypes.ENGLISH
     )
     db_session.add(card)
     db_session.commit()
-    db_session.refresh(card)
     return card
 
 @pytest.fixture
@@ -131,16 +133,14 @@ def test_pack(db_session, test_album):
     """Create test pack."""
     pack = Pack(
         album_id=test_album.id,
-        album_publisher=test_album.id,
         pack_publisher="Panini",
-        pack_container_type="paper",
-        pack_edition="regular",
-        language="english",
+        pack_container_type=ContainerTypes.PAPER,
+        pack_edition=PackTypes.REGULAR,
+        language=LanguageTypes.ENGLISH,
         pack_sticker_count=5
     )
     db_session.add(pack)
     db_session.commit()
-    db_session.refresh(pack)
     return pack
 
 @pytest.fixture
@@ -148,14 +148,12 @@ def test_box(db_session, test_album):
     """Create test box."""
     box = Box(
         album_id=test_album.id,
-        album_publisher=test_album.id,
         box_publisher="Panini",
-        box_edition="regular",
+        box_edition=BoxTypes.REGULAR,
         box_pack_count=50
     )
     db_session.add(box)
     db_session.commit()
-    db_session.refresh(box)
     return box
 
 @pytest.fixture
@@ -163,10 +161,15 @@ def test_memorabilia(db_session, test_album):
     """Create test memorabilia."""
     memorabilia = Memorabilia(
         album_id=test_album.id,
-        memorabilia_type="jersey",
-        memorabilia_special_features="signed"
+        item_name="Test Jersey",
+        item_type="jersey",
+        item_description="Test Description",
+        competition_year=2022,
+        condition=ConditionTypes.MINT,
+        rarity_level=1,
+        is_authenticated=True,
+        authentication_code="AUTH123"
     )
     db_session.add(memorabilia)
     db_session.commit()
-    db_session.refresh(memorabilia)
     return memorabilia

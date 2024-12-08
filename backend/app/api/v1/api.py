@@ -13,10 +13,14 @@ from .endpoints import (
     trading
 )
 
+# Create API router with consistent trailing slash handling
 api_router = APIRouter()
 
 # Health check
-api_router.include_router(health.router, tags=["health"])
+api_router.include_router(
+    health.router,
+    tags=["health"]
+)
 
 # Core Management
 api_router.include_router(

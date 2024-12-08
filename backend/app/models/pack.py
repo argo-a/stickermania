@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, ForeignKey, Text, Boolean
+from sqlalchemy import Column, String, Integer, ForeignKey, Text, Boolean, CheckConstraint
 from sqlalchemy.orm import relationship
 from .base import BaseModel
 
@@ -6,7 +6,6 @@ class Pack(BaseModel):
     __tablename__ = "packs"
 
     album_id = Column(Integer, ForeignKey("albums.id"), nullable=False)
-    album_publisher = Column(Integer, ForeignKey("albums.id"), nullable=False)
     pack_publisher = Column(String, nullable=False)
     pack_container_type = Column(String, nullable=False)
     pack_edition = Column(String, nullable=False)
@@ -14,9 +13,12 @@ class Pack(BaseModel):
     pack_sticker_count = Column(Integer, nullable=False)
     pack_special_features = Column(String, nullable=True)
 
+    # Add check constraint for sticker count
+    __table_args__ = (
+        CheckConstraint('pack_sticker_count > 0', name='check_sticker_count'),
+    )
+
     # Relationships
-    album = relationship("Album", foreign_keys=[album_id])
-    publisher = relationship("Album", foreign_keys=[album_publisher])
     collector_packs = relationship("CollectorPack", back_populates="pack")
 
 class CollectorPack(BaseModel):
@@ -27,6 +29,11 @@ class CollectorPack(BaseModel):
     collector_pack_quantity = Column(Integer, nullable=False, default=1)
     collector_pack_condition = Column(String, nullable=True)
     collector_pack_is_sealed = Column(Boolean, default=True)
+
+    # Add check constraint for quantity
+    __table_args__ = (
+        CheckConstraint('collector_pack_quantity > 0', name='check_pack_quantity'),
+    )
 
     # Relationships
     collector = relationship("Collector", back_populates="packs")

@@ -4,7 +4,7 @@ from sqlalchemy import func
 from typing import List, Optional
 
 from ....db.session import get_db
-from ....models import Competition, Album, Card, CollectorAlbum, CollectorCard
+from ....models import Competition, Album, Card, CollectorAlbum, CollectorCard, Memorabilia
 from ..schemas.competition import (
     CompetitionCreate,
     CompetitionUpdate,
@@ -59,7 +59,35 @@ async def get_competition(
     ).first()
     if not competition:
         raise HTTPException(status_code=404, detail="Competition not found")
-    return competition
+
+    # Get associated items
+    albums = db.query(Album).filter(Album.competition_id == competition_id).all()
+    cards = db.query(Card).filter(Card.competition_id == competition_id).all()
+    
+    # Get memorabilia through albums
+    memorabilia = (
+        db.query(Memorabilia)
+        .select_from(Memorabilia)
+        .join(Album)
+        .filter(Album.competition_id == competition_id)
+        .all()
+    )
+
+    # Format response
+    response = {
+        "id": competition.id,
+        "competition_name": competition.competition_name,
+        "competition_year": competition.competition_year,
+        "competition_type": competition.competition_type,
+        "competition_host_country": competition.competition_host_country,
+        "competition_winner": competition.competition_winner,
+        "created_at": competition.created_at,
+        "updated_at": competition.updated_at,
+        "albums": [{"id": a.id, "title": a.album_title} for a in albums],
+        "cards": [{"id": c.id, "name": c.card_player_name} for c in cards],
+        "memorabilia": [{"id": m.id, "type": m.item_type} for m in memorabilia]
+    }
+    return response
 
 @router.put("/{competition_id}", response_model=CompetitionResponse)
 async def update_competition(

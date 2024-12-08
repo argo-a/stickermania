@@ -29,7 +29,7 @@ async def list_memorabilia(
     if album_id:
         query = query.filter(Memorabilia.album_id == album_id)
     if memorabilia_type:
-        query = query.filter(Memorabilia.memorabilia_type == memorabilia_type)
+        query = query.filter(Memorabilia.item_type == memorabilia_type)
     
     return query.offset(skip).limit(limit).all()
 
@@ -93,11 +93,11 @@ async def list_collector_memorabilia(
     
     if memorabilia_type:
         query = query.join(Memorabilia).filter(
-            Memorabilia.memorabilia_type == memorabilia_type
+            Memorabilia.item_type == memorabilia_type
         )
     if is_sealed is not None:
         query = query.filter(
-            CollectorMemorabilia.collector_memorabilia_is_sealed == is_sealed
+            CollectorMemorabilia.display_status == "sealed" if is_sealed else "displayed"
         )
     
     return query.all()

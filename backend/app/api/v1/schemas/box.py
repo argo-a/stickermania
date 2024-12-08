@@ -1,13 +1,31 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, conint
 from datetime import datetime
+from enum import Enum
+from ....models.types import BoxTypes, ConditionTypes
+
+class BoxEditionEnum(str, Enum):
+    REGULAR = BoxTypes.REGULAR
+    HOBBY = BoxTypes.HOBBY
+    RETAIL = BoxTypes.RETAIL
+    PREMIUM = BoxTypes.PREMIUM
+    LIMITED = BoxTypes.LIMITED
+    SPECIAL_EDITION = BoxTypes.SPECIAL_EDITION
+
+class BoxConditionEnum(str, Enum):
+    MINT = ConditionTypes.MINT
+    NEAR_MINT = ConditionTypes.NEAR_MINT
+    EXCELLENT = ConditionTypes.EXCELLENT
+    VERY_GOOD = ConditionTypes.VERY_GOOD
+    GOOD = ConditionTypes.GOOD
+    FAIR = ConditionTypes.FAIR
+    POOR = ConditionTypes.POOR
 
 class BoxBase(BaseModel):
     album_id: int
-    album_publisher: int
     box_publisher: str
-    box_edition: str
-    box_pack_count: int
+    box_edition: BoxEditionEnum
+    box_pack_count: conint(gt=0)  # Must be greater than 0
     box_special_features: Optional[str] = None
 
 class BoxCreate(BoxBase):
@@ -15,8 +33,8 @@ class BoxCreate(BoxBase):
 
 class BoxUpdate(BaseModel):
     box_publisher: Optional[str] = None
-    box_edition: Optional[str] = None
-    box_pack_count: Optional[int] = None
+    box_edition: Optional[BoxEditionEnum] = None
+    box_pack_count: Optional[conint(gt=0)] = None
     box_special_features: Optional[str] = None
 
 class BoxResponse(BoxBase):
@@ -30,16 +48,16 @@ class BoxResponse(BoxBase):
 class CollectorBoxBase(BaseModel):
     collector_id: int
     box_id: int
-    collector_box_quantity: int = 1
-    collector_box_condition: str
+    collector_box_quantity: conint(gt=0)  # Must be greater than 0
+    collector_box_condition: BoxConditionEnum
     collector_box_is_sealed: bool = True
 
 class CollectorBoxCreate(CollectorBoxBase):
     pass
 
 class CollectorBoxUpdate(BaseModel):
-    collector_box_quantity: Optional[int] = None
-    collector_box_condition: Optional[str] = None
+    collector_box_quantity: Optional[conint(gt=0)] = None
+    collector_box_condition: Optional[BoxConditionEnum] = None
     collector_box_is_sealed: Optional[bool] = None
 
 class CollectorBoxResponse(CollectorBoxBase):

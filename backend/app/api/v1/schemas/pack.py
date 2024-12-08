@@ -1,15 +1,14 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, conint
 from datetime import datetime
 
 class PackBase(BaseModel):
     album_id: int
-    album_publisher: int
     pack_publisher: str
     pack_container_type: str
     pack_edition: str
     language: str
-    pack_sticker_count: int
+    pack_sticker_count: conint(gt=0)  # Must be greater than 0
     pack_special_features: Optional[str] = None
 
 class PackCreate(PackBase):
@@ -20,7 +19,7 @@ class PackUpdate(BaseModel):
     pack_container_type: Optional[str] = None
     pack_edition: Optional[str] = None
     language: Optional[str] = None
-    pack_sticker_count: Optional[int] = None
+    pack_sticker_count: Optional[conint(gt=0)] = None
     pack_special_features: Optional[str] = None
 
 class PackResponse(PackBase):
@@ -34,7 +33,7 @@ class PackResponse(PackBase):
 class CollectorPackBase(BaseModel):
     collector_id: int
     pack_id: int
-    collector_pack_quantity: int = 1
+    collector_pack_quantity: conint(gt=0)  # Must be greater than 0
     collector_pack_condition: Optional[str] = None
     collector_pack_is_sealed: bool = True
 
@@ -42,7 +41,7 @@ class CollectorPackCreate(CollectorPackBase):
     pass
 
 class CollectorPackUpdate(BaseModel):
-    collector_pack_quantity: Optional[int] = None
+    collector_pack_quantity: Optional[conint(gt=0)] = None
     collector_pack_condition: Optional[str] = None
     collector_pack_is_sealed: Optional[bool] = None
 

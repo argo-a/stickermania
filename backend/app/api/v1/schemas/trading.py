@@ -8,28 +8,31 @@ class TradeRequestBase(BaseModel):
     trade_requests_status: str = "pending"
     trade_requests_tracking_number: Optional[str] = None
 
-class TradeRequestCreate(TradeRequestBase):
-    pass
-
-class TradeRequestUpdate(BaseModel):
-    trade_requests_status: Optional[str] = None
-    trade_requests_tracking_number: Optional[str] = None
-
 class TradeItemBase(BaseModel):
-    trade_request_id: int
     trade_item_type: str
+    item_id: int
     trade_item_quantity: int
-    trade_item_is_incoming: bool
+    trade_item_is_incoming: bool = False
 
 class TradeItemCreate(TradeItemBase):
     pass
 
-class TradeItemResponse(TradeItemBase):
+class TradeItemWithRequestId(TradeItemBase):
+    trade_request_id: int
+
+class TradeItemResponse(TradeItemWithRequestId):
     id: int
     trade_item_created_at: datetime
 
     class Config:
         orm_mode = True
+
+class TradeRequestCreate(TradeRequestBase):
+    items: List[TradeItemBase]
+
+class TradeRequestUpdate(BaseModel):
+    trade_requests_status: Optional[str] = None
+    trade_requests_tracking_number: Optional[str] = None
 
 class TradeRequestResponse(TradeRequestBase):
     id: int

@@ -4,15 +4,29 @@ from datetime import datetime
 
 class MemorabiliaBase(BaseModel):
     album_id: int
-    memorabilia_type: str
-    memorabilia_special_features: Optional[str] = None
+    item_name: str
+    item_type: str
+    item_description: Optional[str] = None
+    competition_year: int
+    authentication_code: Optional[str] = None
+    condition: str
+    rarity_level: int
+    is_authenticated: bool = False
+    item_metadata: Optional[dict] = None
 
 class MemorabiliaCreate(MemorabiliaBase):
     pass
 
 class MemorabiliaUpdate(BaseModel):
-    memorabilia_type: Optional[str] = None
-    memorabilia_special_features: Optional[str] = None
+    item_name: Optional[str] = None
+    item_type: Optional[str] = None
+    item_description: Optional[str] = None
+    competition_year: Optional[int] = None
+    authentication_code: Optional[str] = None
+    condition: Optional[str] = None
+    rarity_level: Optional[int] = None
+    is_authenticated: Optional[bool] = None
+    item_metadata: Optional[dict] = None
 
 class MemorabiliaResponse(MemorabiliaBase):
     id: int
@@ -25,17 +39,23 @@ class MemorabiliaResponse(MemorabiliaBase):
 class CollectorMemorabiliaBase(BaseModel):
     collector_id: int
     memorabilia_id: int
-    collector_memorabilia_quantity: int = 1
-    collector_memorabilia_condition: Optional[str] = None
-    collector_memorabilia_is_sealed: bool = True
+    condition: str
+    is_displayed: bool = False
+    acquisition_date: Optional[str] = None
+    acquisition_price: Optional[int] = None
+    notes: Optional[str] = None
+    item_metadata: Optional[dict] = None
 
 class CollectorMemorabiliaCreate(CollectorMemorabiliaBase):
     pass
 
 class CollectorMemorabiliaUpdate(BaseModel):
-    collector_memorabilia_quantity: Optional[int] = None
-    collector_memorabilia_condition: Optional[str] = None
-    collector_memorabilia_is_sealed: Optional[bool] = None
+    condition: Optional[str] = None
+    is_displayed: Optional[bool] = None
+    acquisition_date: Optional[str] = None
+    acquisition_price: Optional[int] = None
+    notes: Optional[str] = None
+    item_metadata: Optional[dict] = None
 
 class CollectorMemorabiliaResponse(CollectorMemorabiliaBase):
     id: int

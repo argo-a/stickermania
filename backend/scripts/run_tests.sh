@@ -8,6 +8,9 @@ fi
 # Install test dependencies
 pip install -r ../requirements.txt
 
+# Add backend directory to PYTHONPATH
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+
 # Run tests with coverage
 pytest \
     --verbose \

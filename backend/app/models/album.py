@@ -19,6 +19,7 @@ class Album(BaseModel):
     sections = relationship("AlbumSection", back_populates="album")
     stickers = relationship("Sticker", back_populates="album")
     collector_albums = relationship("CollectorAlbum", back_populates="album")
+    memorabilia = relationship("Memorabilia", back_populates="album")  # Added this relationship
 
 class AlbumSection(BaseModel):
     __tablename__ = "album_sections"
