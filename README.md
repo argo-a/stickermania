@@ -18,93 +18,7 @@ A comprehensive soccer collectibles management platform focused on soccer compet
 - SQLAlchemy (ORM)
 - Alembic (Database Migrations)
 - Pydantic (Data Validation)
-
-## API Endpoints
-
-### Core Management
-
-#### Competitions
-- `GET /api/v1/competitions/` - List all competitions
-- `POST /api/v1/competitions/` - Create new competition
-- `GET /api/v1/competitions/{id}` - Get competition details
-- `PUT /api/v1/competitions/{id}` - Update competition
-- `DELETE /api/v1/competitions/{id}` - Delete competition
-- `GET /api/v1/competitions/{id}/stats` - Get competition statistics
-
-### Collection Management
-
-#### Collectors
-- `GET /api/v1/collectors/{id}` - Get collector profile
-- `PUT /api/v1/collectors/{id}` - Update collector profile
-- `GET /api/v1/collectors/{id}/statistics` - Get collection statistics
-
-#### Albums
-- `GET /api/v1/albums/` - List all albums
-- `POST /api/v1/albums/` - Create new album
-- `GET /api/v1/albums/{id}` - Get album details
-- `PUT /api/v1/albums/{id}` - Update album
-- `POST /api/v1/albums/{id}/sections` - Add album section
-- `GET /api/v1/albums/{id}/sections` - List album sections
-- `GET /api/v1/albums/collector/{id}` - List collector's albums
-
-#### Stickers
-- `GET /api/v1/stickers/album/{id}` - List album stickers
-- `POST /api/v1/stickers/` - Create new sticker
-- `GET /api/v1/stickers/collector/{id}` - List collector's stickers
-- `POST /api/v1/stickers/collector` - Add sticker to collection
-- `PUT /api/v1/stickers/collector/{id}` - Update collector's sticker
-- `GET /api/v1/stickers/missing/{id}` - List missing stickers
-
-#### Cards
-- `GET /api/v1/cards/` - List all cards
-- `POST /api/v1/cards/` - Create new card
-- `GET /api/v1/cards/{id}` - Get card details
-- `GET /api/v1/cards/collector/{id}` - List collector's cards
-- `POST /api/v1/cards/collector` - Add card to collection
-- `PUT /api/v1/cards/collector/{id}` - Update collector's card
-
-#### Packs
-- `GET /api/v1/packs/` - List all packs
-- `POST /api/v1/packs/` - Create new pack
-- `GET /api/v1/packs/{id}` - Get pack details
-- `PUT /api/v1/packs/{id}` - Update pack
-- `GET /api/v1/packs/collector/{id}` - List collector's packs
-- `POST /api/v1/packs/collector` - Add pack to collection
-- `PUT /api/v1/packs/collector/{id}` - Update collector's pack
-
-#### Boxes
-- `GET /api/v1/boxes/` - List all boxes
-- `POST /api/v1/boxes/` - Create new box
-- `GET /api/v1/boxes/{id}` - Get box details
-- `PUT /api/v1/boxes/{id}` - Update box
-- `GET /api/v1/boxes/collector/{id}` - List collector's boxes
-- `POST /api/v1/boxes/collector` - Add box to collection
-- `PUT /api/v1/boxes/collector/{id}` - Update collector's box
-
-#### Memorabilia
-- `GET /api/v1/memorabilia/` - List all memorabilia
-- `POST /api/v1/memorabilia/` - Create new memorabilia
-- `GET /api/v1/memorabilia/{id}` - Get memorabilia details
-- `PUT /api/v1/memorabilia/{id}` - Update memorabilia
-- `GET /api/v1/memorabilia/collector/{id}` - List collector's memorabilia
-- `POST /api/v1/memorabilia/collector` - Add memorabilia to collection
-- `PUT /api/v1/memorabilia/collector/{id}` - Update collector's memorabilia
-
-### Trading System
-
-#### Company Inventory
-- `GET /api/v1/trading/inventory` - List inventory items
-- `POST /api/v1/trading/inventory` - Add inventory item
-- `PUT /api/v1/trading/inventory/{id}` - Update inventory item
-
-#### Trade Requests
-- `POST /api/v1/trading/request` - Create trade request
-- `GET /api/v1/trading/request/{id}` - Get trade request status
-- `GET /api/v1/trading/requests` - List trade requests
-- `PUT /api/v1/trading/request/{id}/cancel` - Cancel trade request
-
-#### Inventory Movement
-- `POST /api/v1/trading/movement` - Record inventory movement
+- pytest (Testing Framework)
 
 ## Project Structure
 
@@ -118,6 +32,9 @@ backend/
 │   ├── db/              # Database configuration
 │   ├── models/          # SQLAlchemy models
 │   └── schemas/         # Pydantic schemas
+├── tests/               # Test files
+│   ├── conftest.py     # Test configuration and fixtures
+│   └── test_*.py       # Test modules
 └── scripts/             # Utility scripts
 ```
 
@@ -158,6 +75,45 @@ uvicorn app.main:app --reload
 
 The API will be available at http://localhost:8000
 
+## Testing
+
+The project includes comprehensive tests for all API endpoints and functionality.
+
+### Running Tests
+
+1. From the backend directory, run the test script:
+```bash
+./scripts/run_tests.sh
+```
+
+This will:
+- Run all tests with coverage reporting
+- Generate HTML coverage reports
+- Display test summary
+
+2. Alternatively, run pytest directly:
+```bash
+pytest --verbose --cov=app tests/
+```
+
+### Test Structure
+
+- `tests/conftest.py`: Test configuration and fixtures
+- `tests/test_main.py`: Core API tests
+- `tests/test_competitions.py`: Competition endpoint tests
+- `tests/test_collectors.py`: Collector and collection tests
+- `tests/test_trading.py`: Trading system tests
+
+### Test Coverage
+
+The test suite covers:
+- API Endpoints
+- Database Models
+- Business Logic
+- Error Handling
+- Input Validation
+- Authentication/Authorization
+
 ## API Documentation
 
 Once the server is running, you can access:
@@ -175,6 +131,28 @@ After making changes to the models, create a new migration:
 alembic revision --autogenerate -m "description of changes"
 alembic upgrade head
 ```
+
+### Running Tests During Development
+
+For test-driven development:
+```bash
+# Run tests in watch mode
+pytest-watch
+
+# Run specific test file
+pytest tests/test_specific.py -v
+
+# Run tests matching a pattern
+pytest -k "test_pattern" -v
+```
+
+### Code Quality
+
+The project uses:
+- pytest for testing
+- Coverage.py for code coverage
+- pylint for code quality
+- black for code formatting
 
 ## License
 
